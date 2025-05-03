@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Telegram Deep Link Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    textarea, input, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .output {
+      background: #f4f4f4;
+      padding: 10px;
+      white-space: pre-wrap;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    .copied {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Telegram Link Generator</h2>
+
+  <label for="botUsername">Bot Username (e.g., @DramaShip1bot)</label>
+  <input type="text" id="botUsername" placeholder="@DramaShip1bot" />
+
+  <label for="messages">Enter Each Message on a New Line</label>
+  <textarea id="messages" rows="6" placeholder="The Death of Khun Phra&#10;Sky castle&#10;Hell for you"></textarea>
+
+  <button onclick="generateLinks()">Generate Links</button>
+
+  <h3>Output:</h3>
+  <div class="output" id="output"></div>
+  <p id="copyStatus" class="copied"></p>
+
+  <script>
+    function generateLinks() {
+      const botInput = document.getElementById("botUsername").value.trim();
+      const botUsername = botInput.startsWith("@") ? botInput.slice(1) : botInput;
+      const messages = document.getElementById("messages").value.trim().split("\n");
+      const output = messages.map(msg => {
+        const encoded = encodeURIComponent(msg.trim());
+        return `tg://resolve?domain=${botUsername}&text=${encoded}`;
+      }).join("\n");
+
+      const outputDiv = document.getElementById("output");
+      outputDiv.textContent = output;
+
+      // Copy to clipboard
+      navigator.clipboard.writeText(output).then(() => {
+        document.getElementById("copyStatus").textContent = "Copied to clipboard!";
+        setTimeout(() => {
+          document.getElementById("copyStatus").textContent = "";
+        }, 2000);
+      }).catch(err => {
+        document.getElementById("copyStatus").textContent = "Failed to copy.";
+      });
+    }
+  </script>
+
+</body>
+</html>
